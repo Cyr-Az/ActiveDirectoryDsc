@@ -2824,3 +2824,25 @@ function Resolve-MembersSecurityIdentifier
         }
     }
 }
+
+function Get-CredentialFromKeyVault
+ {
+     [CmdletBinding()]
+     [OutputType([System.Management.Automation.PSCredential])]
+     param
+     (
+         [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+         [System.String[]]
+         $KeyVaultName,
+         [Parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+         [System.String[]]
+         $UserUpn = "null",
+         [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+         [System.String[]]
+         $SecretName
+     )
+
+     $managedIdentityToken = (Invoke-RestMethod -Uri 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -Method GET -Headers @{Metadata="true"} ).access_token
+     $password = ConvertTo-SecureString (Invoke-RestMethod -Uri https://$($KeyVaultName).vault.azure.net/secrets/$($SecretName)?api-version=2016-10-01 -Method GET -Headers @{Authorization="Bearer $($managedIdentityToken)"}).value -AsPlainText -Force
+     New-Object System.Management.Automation.PSCredential ($UserUpn, $password)
+ }

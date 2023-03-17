@@ -44,14 +44,37 @@ function Get-TargetResource
         [System.String]
         $DomainName,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'PSCredential', Mandatory = $true)]
         [System.Management.Automation.PSCredential]
         $Credential,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'PSCredential', Mandatory = $true)]
         [System.Management.Automation.PSCredential]
-        $SafemodeAdministratorPassword
+        $SafemodeAdministratorPassword,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $KeyVaultName,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $DomainAdminUpn,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $DomainAdminPasswordSecretName,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $SafemodeAdminPasswordSecretName
+
     )
+
+    if ($PSCmdlet.ParameterSetName -eq 'KVCredential')
+    {
+        $Credential =  Get-CredentialFromKeyVault -KeyVaultName $KeyVaultName -UserUpn $DomainAdminUpn -SecretName $DomainAdminPasswordSecretName
+        $SafemodeAdministratorPassword = Get-CredentialFromKeyVault -KeyVaultName $KeyVaultName -UserUpn "null" -SecretName $SafemodeAdminPasswordSecretName
+    }
 
     Assert-Module -ModuleName 'ActiveDirectory'
 
@@ -216,13 +239,29 @@ function Set-TargetResource
         [System.String]
         $DomainName,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'PSCredential', Mandatory = $true)]
         [System.Management.Automation.PSCredential]
         $Credential,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'PSCredential', Mandatory = $true)]
         [System.Management.Automation.PSCredential]
         $SafemodeAdministratorPassword,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $KeyVaultName,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $DomainAdminUpn,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $DomainAdminPasswordSecretName,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $SafemodeAdminPasswordSecretName,
 
         [Parameter()]
         [System.String]
@@ -269,6 +308,12 @@ function Set-TargetResource
         [System.Boolean]
         $InstallDns
     )
+
+    if ($PSCmdlet.ParameterSetName -eq 'KVCredential')
+    {
+        $Credential =  Get-CredentialFromKeyVault -KeyVaultName $KeyVaultName -UserUpn $DomainAdminUpn -SecretName $DomainAdminPasswordSecretName
+        $SafemodeAdministratorPassword = Get-CredentialFromKeyVault -KeyVaultName $KeyVaultName -UserUpn "null" -SecretName $SafemodeAdminPasswordSecretName
+    }
 
     $getTargetResourceParameters = @{
         DomainName                    = $DomainName
@@ -622,13 +667,29 @@ function Test-TargetResource
         [System.String]
         $DomainName,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'PSCredential', Mandatory = $true)]
         [System.Management.Automation.PSCredential]
         $Credential,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'PSCredential', Mandatory = $true)]
         [System.Management.Automation.PSCredential]
         $SafemodeAdministratorPassword,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $KeyVaultName,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $DomainAdminUpn,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $DomainAdminPasswordSecretName,
+
+        [Parameter(ParameterSetName = 'KVCredential', Mandatory = $true)]
+        [System.String]
+        $SafemodeAdminPasswordSecretName,
 
         [Parameter()]
         [System.String]
@@ -675,6 +736,12 @@ function Test-TargetResource
         [System.Boolean]
         $InstallDns
     )
+
+    if ($PSCmdlet.ParameterSetName -eq 'KVCredential')
+    {
+        $Credential =  Get-CredentialFromKeyVault -KeyVaultName $KeyVaultName -UserUpn $DomainAdminUpn -SecretName $DomainAdminPasswordSecretName
+        $SafemodeAdministratorPassword = Get-CredentialFromKeyVault -KeyVaultName $KeyVaultName -UserUpn "null" -SecretName $SafemodeAdminPasswordSecretName
+    }
 
     Write-Verbose -Message ($script:localizedData.TestingConfiguration -f $env:COMPUTERNAME, $DomainName)
 

@@ -2,8 +2,12 @@
 class MSFT_ADDomainController : OMI_BaseResource
 {
     [Key, Description("The fully qualified domain name (FQDN) of the domain the Domain Controller will be joining.")] String DomainName;
-    [Required, Description("The credentials (as a 'PSCredential' object) of a user that has Domain Administrator rights to add the Domain Controller to the domain."), EmbeddedInstance("MSFT_Credential")] String Credential;
-    [Required, Description("The 'PSCredential' object containing the password to use for Directory Services Restore Mode (DSRM)."), EmbeddedInstance("MSFT_Credential")] String SafemodeAdministratorPassword;
+    [Write, Description("The credentials (as a 'PSCredential' object) of a user that has Domain Administrator rights to add the Domain Controller to the domain."), EmbeddedInstance("MSFT_Credential")] String Credential;
+    [Write, Description("The 'PSCredential' object containing the password to use for Directory Services Restore Mode (DSRM)."), EmbeddedInstance("MSFT_Credential")] String SafemodeAdministratorPassword;
+    [Write, Description("The KeyVault account name that contains the secrets corresponding to the Domain Administrator Account password and to the Safemode Administrator password")] String KeyVaultName;
+    [Write, Description("The Domain Administrator Account UPN (user principal name)")] String DomainAdminUpn;
+    [Write, Description("The name of the secret containing the Domain Administrator Account password")] String DomainAdminPasswordSecretName;
+    [Write, Description("The name of the secret containing the Safemode Administrator password")] String SafemodeAdminPasswordSecretName;
     [Write, Description("The path where the database will be stored.")] String DatabasePath;
     [Write, Description("The path where the logs will be stored.")] String LogPath;
     [Write, Description("The path where the Sysvol will be stored.")] String SysvolPath;
